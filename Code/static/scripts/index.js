@@ -2,7 +2,11 @@
 
 // * ==================== LANDING PAGE JS ==================== * //
 window.onscroll = function() {stickNavbar()};
-
+function smoothScroll(){
+    document.querySelector('#features').scrollIntoView({
+        behavior: 'smooth'
+    });
+}
 const navbar = document.getElementById("navbar");
 const sticky = navbar.offsetTop;
 
