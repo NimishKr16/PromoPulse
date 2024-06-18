@@ -180,8 +180,11 @@
   }
   
   .logos img {
-    max-width: 100px;
+    max-width: 110px;
     margin: 20px;
+    border-radius: 15%;
+    padding-left: 2rem;
+    padding-right: 1rem;
   }
   
   .slider {
@@ -228,6 +231,7 @@
     background: linear-gradient(135deg, #ff4081, #e00070);
     padding: 0.5rem 0.5rem;
     border-radius: 0.5rem;
+    color: black;
   }
 
   #login-btn:hover{
