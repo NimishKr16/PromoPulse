@@ -168,7 +168,7 @@
   .feature-item {
     max-width: 300px;
     text-align: center;
-    padding: 20px;
+    padding: 40px;
   }
   
   .logos {
@@ -222,4 +222,15 @@
     color: white;
     padding: 10px;
     cursor: pointer;
+  }
+
+  #login-btn{
+    background: linear-gradient(135deg, #ff4081, #e00070);
+    padding: 0.5rem 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  #login-btn:hover{
+    background: linear-gradient(135deg, #e00070, #ff4081);
+    box-shadow: 0 0 25px rgba(255, 64, 129, 0.7);
   }
