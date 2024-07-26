@@ -10,11 +10,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///promopulse.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# ! ---------------- MODELS ----------------#
+# ! ---------------- MODELS ---------------- #
 
 # * --- Admin Table --- #
 class Admin(db.Model):
     __tablename__ = 'admin'
+    
     AdminID = db.Column(db.Integer, primary_key=True)
     Username = db.Column(db.String(50), nullable=False)
     Password = db.Column(db.String(255), nullable=False)
@@ -24,7 +25,46 @@ class Admin(db.Model):
         return f"<{self.Username} | {self.Password} | {self.Email}>"
 
 
-# ! ---------------- ROUTES ----------------#
+# * --- User Table --- #
+class User(db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    Name = db.Column(db.String(100), nullable=False)
+    Password = db.Column(db.String(256), nullable=False)
+    Email = db.Column(db.String(100), unique=True, nullable=False)
+    Role = db.Column(db.String(20), nullable=False)
+    
+    # Relationships
+    sponsor = db.relationship('Sponsor', uselist=False, backref='user')
+    influencer = db.relationship('Influencer', uselist=False, backref='user')
+    
+    
+# * --- Sponsor Table --- #
+class Sponsor(db.Model):
+    __tablename__ = 'sponsors'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    company_name = db.Column(db.String(100), nullable=False)
+    industry = db.Column(db.String(50), nullable=False)
+    budget = db.Column(db.Float, nullable=False)
+    
+# * --- Influencer Table --- #
+class Influencer(db.Model):
+    __tablename__ = 'influencers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    profile_name = db.Column(db.String(100), nullable=False)
+    niche = db.Column(db.String(50), nullable=False)
+    reach = db.Column(db.Float, nullable=False)
+
+with app.app_context():
+    db.create_all()
+
+
+# ! ---------------- ROUTES ---------------- #
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -36,6 +76,23 @@ def login():
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+
+# * ---------------- AUTHENTICATION ---------------- #
+
+@app.route('/registerUser', methods=['POST'])
+def registerUser():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        role = request.form.get('role')
+        pwd = request.form.get('pwd')
+        email = request.form.get('email')
+        industry = request.form.get('industry')
+        
+        
+
+    return "HELLO WORLD"
+
 
 @app.route('/admin')
 def admin_login_page():
