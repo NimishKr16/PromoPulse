@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import hashlib
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -60,8 +60,6 @@ class Influencer(db.Model):
     niche = db.Column(db.String(50), nullable=False)
     reach = db.Column(db.Float, nullable=False)
 
-with app.app_context():
-    db.create_all()
 
 
 # ! ---------------- ROUTES ---------------- #
@@ -89,9 +87,26 @@ def registerUser():
         email = request.form.get('email')
         industry = request.form.get('industry')
         
-        
+        existing_user = User.query.filter_by(Email=email).first()
+        if existing_user:
+            return render_template('signup.html',msg=True)
 
-    return "HELLO WORLD"
+        hashed_password = generate_password_hash(pwd, method='pbkdf2:sha256', salt_length=16)
+        new_user = User(Name=name, Password=hashed_password, Email=email, Role=role)
+        db.session.add(new_user)
+        db.session.commit()
+        print("=== NEW USER COMMIT ==== ")
+        if role == 'sponsor':
+            company_name = name
+            new_sponsor = Sponsor(user_id=new_user.id, 
+                                  company_name=company_name,
+                                  industry=industry,
+                                  budget = 0)
+            db.session.add(new_sponsor)
+            db.session.commit()
+            print("=== NEW SPONSOR COMMIT ==== ")
+
+    return redirect(url_for('login'))
 
 
 @app.route('/admin')
