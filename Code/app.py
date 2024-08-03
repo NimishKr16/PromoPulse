@@ -95,7 +95,8 @@ def registerUser():
         new_user = User(Name=name, Password=hashed_password, Email=email, Role=role)
         db.session.add(new_user)
         db.session.commit()
-        print("=== NEW USER COMMIT ==== ")
+        print("==== NEW USER COMMIT ==== ")
+        
         if role == 'sponsor':
             company_name = name
             new_sponsor = Sponsor(user_id=new_user.id, 
@@ -104,7 +105,7 @@ def registerUser():
                                   budget = 0)
             db.session.add(new_sponsor)
             db.session.commit()
-            print("=== NEW SPONSOR COMMIT ==== ")
+            print("==== NEW SPONSOR COMMIT ==== ")
 
     return redirect(url_for('login'))
 
