@@ -143,7 +143,7 @@ def registerUser():
             db.session.commit()
             print("==== NEW INFLUENCER COMMIT ==== ")
 
-    return redirect(url_for('login'))
+    return redirect(url_for('login',message="User registered successfully!"))
 
 # LOGIN
 @app.route('/userLogin', methods = ['POST'])
