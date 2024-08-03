@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -61,6 +62,15 @@ class Influencer(db.Model):
     reach = db.Column(db.Float, nullable=False)
 
 
+# ------------ WRAPPER FUNCTIONS -------------
+def role_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session or 'id' not in session or 'role' not in session:
+            return redirect(url_for('login', message='Please Login First'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 # ! ---------------- ROUTES ---------------- #
 @app.route('/')
@@ -69,7 +79,8 @@ def home():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    message = request.args.get('message')
+    return render_template('login.html',message=message)
 
 @app.route('/signup')
 def signup():
@@ -79,6 +90,16 @@ def signup():
 def temp():
     return render_template('tempform.html')
 
+
+@app.route('/logout')
+def logout():
+    if 'user' in session:
+        session.pop('user')
+        session.pop('id')
+        session.pop('role')
+    
+        print("=== LOGGED OUT ===")
+    return redirect(url_for('login',message='LOG OUT Successful!'))
 
 # * ---------------- AUTHENTICATION ---------------- #
 
@@ -111,6 +132,16 @@ def registerUser():
             db.session.add(new_sponsor)
             db.session.commit()
             print("==== NEW SPONSOR COMMIT ==== ")
+        
+        if role == 'influencer':
+            company_name = name
+            new_influencer = Influencer(user_id=new_user.id, 
+                                  profile_name=company_name,
+                                  niche=industry,
+                                  reach = 0)
+            db.session.add(new_influencer)
+            db.session.commit()
+            print("==== NEW INFLUENCER COMMIT ==== ")
 
     return redirect(url_for('login'))
 
@@ -127,8 +158,15 @@ def userLogin():
             is_password_correct = check_password_hash(user.Password, pwd)
             if is_password_correct:
                 role = user.Role
-                temp = role + '.html'
-                return render_template(temp)
+                id = user.id
+                name = (user.Name)
+                # print(name)
+                session['user'] = name
+                session['id'] = id
+                session['role'] = role
+                print(f' ===== {role} log in =====')
+                return redirect(url_for(role,id=id,name=name))
+
             else:
                 return render_template('login.html', message='Incorrect password entered!')
         else:
@@ -137,7 +175,23 @@ def userLogin():
     return render_template('login.html')
     
 
-# * ------------ ADMIN ROUTES ------------
+# * ------------ USER VIEW ROUTES ------------ #
+
+@app.route('/sponsor/<int:id>/<string:name>')
+@role_login_required
+def sponsor(id,name):
+    return render_template('sponsor.html',id=id,name=name)
+
+
+@app.route('/influencer/<int:id>/<string:name>')
+@role_login_required
+def influencer(id,name):
+    return render_template('influencer.html',id=id,name=name)
+
+
+
+
+# * ------------ ADMIN ROUTES ------------ #
 
 @app.route('/admin')
 def admin_login_page():
