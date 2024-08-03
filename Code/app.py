@@ -75,9 +75,14 @@ def login():
 def signup():
     return render_template('signup.html')
 
+@app.route('/temp')
+def temp():
+    return render_template('tempform.html')
+
 
 # * ---------------- AUTHENTICATION ---------------- #
 
+# REGISTER
 @app.route('/registerUser', methods=['POST'])
 def registerUser():
     if request.method == 'POST':
@@ -109,6 +114,30 @@ def registerUser():
 
     return redirect(url_for('login'))
 
+# LOGIN
+@app.route('/userLogin', methods = ['POST'])
+def userLogin():
+    print(request.method)
+    if request.method == 'POST':
+        email = request.form.get('email')
+        pwd = request.form.get('pwd')
+        print(email,pwd)
+        user = User.query.filter_by(Email=email.lower()).first()
+        if user:
+            is_password_correct = check_password_hash(user.Password, pwd)
+            if is_password_correct:
+                role = user.Role
+                temp = role + '.html'
+                return render_template(temp)
+            else:
+                return render_template('login.html', message='Incorrect password entered!')
+        else:
+            return render_template('login.html',message='Account with this email doesn\'t exist!')
+        
+    return render_template('login.html')
+    
+
+# * ------------ ADMIN ROUTES ------------
 
 @app.route('/admin')
 def admin_login_page():
@@ -139,7 +168,14 @@ def admin_dashboard():
     else:
         return "<h1>Must be logged in as Admin</h1>"
 
+
+# ''' RUN APP.PY '''
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True,port=5500)
+
+
+# sample sponsor : email: dotnkey@gmail.com ; pwd : nimish0305
+
