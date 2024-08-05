@@ -62,12 +62,57 @@ class Influencer(db.Model):
     reach = db.Column(db.Float, nullable=False)
 
 
+# * --- Campaign table --- #
+class Campaign(db.Model):
+    __tablename__ = 'campaigns'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    sponsor_id = db.Column(db.Integer, db.ForeignKey('sponsors.id'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    start_date = db.Column(db.Date, nullable=True)
+    end_date = db.Column(db.Date, nullable=True)
+    budget = db.Column(db.Float, nullable=False)
+    visibility = db.Column(db.String(20), nullable=False)  # 'public', 'private'
+    goals = db.Column(db.Text, nullable=True)
+    
+    # Relationships
+    ad_requests = db.relationship('AdRequest', backref='campaign', lazy=True)
+
+# * --- AdRequest table --- #
+class AdRequest(db.Model):
+    __tablename__ = 'ad_requests'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'), nullable=False)
+    influencer_id = db.Column(db.Integer, db.ForeignKey('influencers.id'), nullable=False)
+    messages = db.Column(db.Text, nullable=True)
+    requirements = db.Column(db.Text, nullable=True)
+    payment_amount = db.Column(db.Float, nullable=True)
+    status = db.Column(db.String(20), nullable=False)  # 'Pending', 'Accepted', 'Rejected'
+
 # ------------ WRAPPER FUNCTIONS -------------
 def role_login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user' not in session or 'id' not in session or 'role' not in session:
             return redirect(url_for('login', message='Please Login First'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def sponsor_role_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session["role"] != 'sponsor':
+            return redirect(url_for('login', message='Invalid access. Login First'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'admin' not in session or session['admin'] != True:
+            return redirect(url_for('login', message='Must be logged in as an admin'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -211,17 +256,11 @@ def admin_login():
             return "<h1>Invalid uname or pwd</h1>"
 
 
-def isAdminLogin():
-    return 'admin' in session and session['admin'] == True
-
-
 @app.route('/admin/dashboard')
+@admin_required
 def admin_dashboard():
-    if(isAdminLogin()):
-        return render_template('admin-dash.html')
-    else:
-        return "<h1>Must be logged in as Admin</h1>"
-
+    return render_template('admin-dash.html')
+   
 
 # ''' RUN APP.PY '''
 
