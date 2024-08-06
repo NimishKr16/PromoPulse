@@ -237,12 +237,15 @@ def influencer(id,name):
 
 # * ------------ CAMPAIGN ROUTES ------------ #
 @app.route('/create-campaign')
+@sponsor_role_required
 def campaignForm():
     return render_template('createCmpgn.html')
 
-# ! FIX SPONSOR ID RETRIEVAL. EITHER VIA ROUTE OR VIA SESSION VAR.̀
-@app.route('/create_campaign/<int:sponsor_id>', methods=['GET', 'POST'])
-def create_campaign(sponsor_id):
+
+@app.route('/create_campaign', methods=['GET', 'POST'])
+@sponsor_role_required
+def create_campaign():
+    print(request.method)
     if request.method == 'POST':
         name = request.form['campaignName']
         description = request.form['description']
@@ -251,6 +254,7 @@ def create_campaign(sponsor_id):
         budget = float(request.form['budget'])
         visibility = request.form['visibility']
         goals = request.form['goals']
+        sponsor_id = session['id']
         
         new_campaign = Campaign(
             sponsor_id=sponsor_id,
@@ -265,12 +269,16 @@ def create_campaign(sponsor_id):
         
         db.session.add(new_campaign)
         db.session.commit()
+        print("+++++ NEW CAMPAIGN CREATED +++++")
 
-        return redirect(url_for('create_campaign', sponsor_id=sponsor_id))
+        return redirect(url_for('campaign_created'))
     
-    return render_template('create_campaign.html', sponsor_id=sponsor_id)
+    return redirect(url_for('campaign_created'))
 
-
+@app.route('/campaign-creation-success')
+@sponsor_role_required
+def campaign_created():
+    return render_template('campsucc.html')
 
 # * ------------ ADMIN ROUTES ------------ #
 

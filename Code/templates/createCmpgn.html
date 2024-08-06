@@ -1,5 +1,11 @@
-{% extends 'base.html' %} {% block title %} Create Campaign {% endblock %} {%
-block content %}
+{% extends 'base.html' %} 
+
+{% block title %} 
+Create Campaign 
+{% endblock %} 
+
+
+{%block content %}
 
 <section class="intro">
   <div
@@ -15,11 +21,11 @@ block content %}
           <div class="col-12 col-lg-10">
             <div class="card" style="border-radius: 1rem">
               <div class="card-body p-5" >
-                <form>
+                <form action="/create_campaign" method="post">
                   <div class="form-outline mb-4">
                     <input
                       type="text"
-                      id="campaignName"
+                      name="campaignName"
                       class="form-control"
                       value="New Campaign"
                       required
@@ -28,7 +34,7 @@ block content %}
                       >Campaign Name</label
                     >
                   </div>
-                  <!-- 2 column grid layout with text inputs for the first and last names -->
+                  <!-- 2 column grname layout with text inputs for the first and last names -->
                   <div class="row">
                     
                     <!-- Date input -->
@@ -36,7 +42,7 @@ block content %}
                       <div class="form-outline mb-4">
                         <input
                           type="text"
-                          id="startDate"
+                          name="startDate"
                           class="form-control datepicker"
                           required
                         />
@@ -50,7 +56,7 @@ block content %}
                       <div class="form-outline mb-4">
                         <input
                           type="text"
-                          id="endDate"
+                          name="endDate"
                           class="form-control datepicker"
                           required
                         />
@@ -64,6 +70,7 @@ block content %}
                     <input
                       type="text"
                       id="form6Example3"
+                      name="description"
                       class="form-control"
                       required
                     />
@@ -74,7 +81,7 @@ block content %}
 
                   <!-- Text input -->
                   <div class="form-outline mb-4">
-                    <select id="form6Example4" class="form-control" required>
+                    <select name="visibility" class="form-control" required>
                       <option value="public">Public</option>
                       <option value="private">Private</option>
                     </select>
@@ -87,7 +94,7 @@ block content %}
                   <div class="form-outline mb-4">
                     <input
                       type="email"
-                      id="form6Example5"
+                      name="form6Example5"
                       class="form-control"
                       required
                     />
@@ -99,6 +106,7 @@ block content %}
                     <input
                       type="number"
                       id="form6Example6"
+                      name="budget"
                       class="form-control"
                       required
                     />
@@ -112,6 +120,7 @@ block content %}
                     <textarea
                       class="form-control"
                       id="form6Example7"
+                      name="goals"
                       rows="4"
                       required
                     ></textarea>
@@ -126,7 +135,7 @@ block content %}
                       class="form-check-input me-2"
                       type="checkbox"
                       value=""
-                      id="form6Example8"
+                      name="form6Example8"
                       checked
                     />
                     <label class="form-check-label" for="form6Example8">
