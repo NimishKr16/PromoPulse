@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -233,6 +234,41 @@ def sponsor(id,name):
 def influencer(id,name):
     return render_template('influencer.html',id=id,name=name)
 
+
+# * ------------ CAMPAIGN ROUTES ------------ #
+@app.route('/create-campaign')
+def campaignForm():
+    return render_template('createCmpgn.html')
+
+# ! FIX SPONSOR ID RETRIEVAL. EITHER VIA ROUTE OR VIA SESSION VAR.̀
+@app.route('/create_campaign/<int:sponsor_id>', methods=['GET', 'POST'])
+def create_campaign(sponsor_id):
+    if request.method == 'POST':
+        name = request.form['campaignName']
+        description = request.form['description']
+        start_date = datetime.strptime(request.form['startDate'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%d')
+        budget = float(request.form['budget'])
+        visibility = request.form['visibility']
+        goals = request.form['goals']
+        
+        new_campaign = Campaign(
+            sponsor_id=sponsor_id,
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            budget=budget,
+            visibility=visibility,
+            goals=goals
+        )
+        
+        db.session.add(new_campaign)
+        db.session.commit()
+
+        return redirect(url_for('create_campaign', sponsor_id=sponsor_id))
+    
+    return render_template('create_campaign.html', sponsor_id=sponsor_id)
 
 
 
