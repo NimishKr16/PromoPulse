@@ -61,6 +61,9 @@ class Influencer(db.Model):
     profile_name = db.Column(db.String(100), nullable=False)
     niche = db.Column(db.String(50), nullable=False)
     reach = db.Column(db.Float, nullable=False)
+    
+    def __repr__(self) -> str:
+        return f"{self.profile_name} : {self.reach} "
 
 
 # * --- Campaign table --- #
@@ -232,10 +235,22 @@ def userLogin():
 
 # * ------------ USER VIEW ROUTES ------------ #
 
-@app.route('/sponsor/<int:id>/<string:name>')
+@app.route('/sponsor/<int:id>/<string:name>' , methods=['GET','POST'])
 @role_login_required
 def sponsor(id,name):
-    return render_template('sponsor.html',id=id,name=name)
+    search_query = request.args.get('search', '')
+    if search_query:
+        # Filter influencers by name or niche
+        influencers = Influencer.query.filter(
+            (Influencer.profile_name.ilike(f'%{search_query}%')) |
+            (Influencer.niche.ilike(f'%{search_query}%'))
+        ).all()
+        print(influencers)
+    else:
+        influencers = Influencer.query.all()
+    # influencers = Influencer.query.all()
+    print(influencers)
+    return render_template('sponsor.html',id=id,name=name,influencers=influencers)
 
 
 @app.route('/influencer/<int:id>/<string:name>')

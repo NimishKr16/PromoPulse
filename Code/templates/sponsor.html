@@ -3,11 +3,96 @@
 {% block title %} @{{name}} - PromoPulse {% endblock %}
 
 {% block content %}
+
+<style>
+  .table-container {
+    margin-top: 20px;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .table th, .table td {
+    padding: 15px;
+    text-align: left;
+  }
+
+  .table th {
+    background-color: #6095F0;
+    color: white;
+  }
+
+  .table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  .table tr:hover {
+    background-color: #ddd;
+  }
+
+  .btn-send-ad-req {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+</style>
+
+{% block css %}
+
+{% endblock %}
     <h1>this is sponsor page</h1>
      <h1> {{id}} </h1>
      <h1> {{name}} </h1>
 
+     <form method="GET" action="{{ url_for('sponsor',id=id,name=name) }}" class="mb-4">
+     <div class="input-group">
+      <input type="text" name="search" class="form-control" placeholder="Search by name or niche" value="{{ search_query }}">
+      <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+  </form>
+
      <a href="{{ url_for('campaignForm') }}" class="btn btn-primary" data-mdb-ripple-init>
         CREATE CAMPAIGN
       </a>
+
+      <div class="container table-container">
+        <h1>Influencers</h1>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Reach</th>
+              <th>Niche</th>
+              <th>Send ad req</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for influencer in influencers %}
+            <tr>
+              <td>{{ influencer.profile_name }}</td>
+              <td>{{ influencer.reach }}</td>
+              <td>{{ influencer.niche }}</td>
+              <td>
+                <a href="#" class="btn-send-ad-req">Send Request</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+     
+
+
 {% endblock %}
