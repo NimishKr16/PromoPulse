@@ -1,0 +1,54 @@
+{% extends 'base.html' %} 
+
+{% block title %} Sponsor Dashboard {% endblock %} 
+
+
+{%block content %}
+<style>
+        .card-header {
+            padding: 1.5rem 1.25rem; /* Increase the header space */
+        }
+
+        .container{
+            margin-left: 8vw;
+        }
+        
+</style>
+<section>
+    <!-- INFO CARDS ROW -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <div class="card text-white bg-success" style="max-width: 20rem;">
+                    <div class="card-header"><h2>Header</h2></div>
+                    <div class="card-body">
+                        <h5 class="card-title">COMPLETED CAMPAIGNS</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <div class="card text-body bg-info" style="max-width: 20rem;">
+                    <div class="card-header"><h2>Header</h2></div>
+                    <div class="card-body">
+                        <h5 class="card-title">ONGOING CAMPAIGNS</h5>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <div class="card bg-body-tertiary" style="max-width: 20rem;">
+                    <div class="card-header"><h2>Header</h2></div>
+                    <div class="card-body">
+                        <h5 class="card-title">TOTAL CAMPAIGNS</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+</section>
+
+{% endblock %} 

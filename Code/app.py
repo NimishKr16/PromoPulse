@@ -104,7 +104,16 @@ def role_login_required(f):
 def sponsor_role_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        print(session['role'])
         if session["role"] != 'sponsor':
+            return redirect(url_for('login', message='Invalid access. Login First'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def influencer_role_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session["role"] != 'influencer':
             return redirect(url_for('login', message='Invalid access. Login First'))
         return f(*args, **kwargs)
     return decorated_function
@@ -279,6 +288,22 @@ def create_campaign():
 @sponsor_role_required
 def campaign_created():
     return render_template('campsucc.html')
+
+
+# * ------------ USER DASHBOARDS  ------------ #
+
+@app.route('/sponsor/dashboard')
+@sponsor_role_required
+def sponsor_dashboard():
+    return render_template('Sdash.html')
+       
+
+@app.route('/influencer/dashboard')
+@influencer_role_required
+def influencer_dashboard():
+    return render_template('iDash.html')
+
+
 
 # * ------------ ADMIN ROUTES ------------ #
 
